@@ -7,6 +7,7 @@ from ingestion.api_client import CoinGeckoClient
 from load_storage.local_storage import save_json
 from load_storage.gcs_storage import upload_file
 from transform.json_to_ndjson import ndjson_transform
+from zoneinfo import ZoneInfo
 from ingestion.warehouse.bigquery_loader import bigquery_load_from_gcs, bigquery_delete_snapshot_date
 
 
@@ -15,7 +16,7 @@ def main():
     snapshot = api_connection.get_market_snapshot() #método del snapshot del mercado
 
 
-    cur_date = datetime.now()
+    cur_date = datetime.now(tz=ZoneInfo("America/Bogota"))
     date_name = datetime.strftime(datetime.now(), '%Y%m%d_%H%M%S') #fecha actual para el nombre
 
     route_to_raw = Path.cwd() / "data" / "raw" #ruta para el raw
@@ -40,7 +41,7 @@ def main():
 
     snapshot_date = cur_date.strftime('%Y-%m-%d') #fecha que se usa para el snapshot
     bigquery_delete_snapshot_date(table_name, snapshot_date) #método para borrar las monedas con mismo snapshot_date, para evitar más de 100
-    
+
     bigquery_load_from_gcs(f"gs://{GCS_BUCKET}/{STAGED_PREFIX}/year={cur_date.year}/month={cur_date.month:02d}/day={cur_date.day:02d}/{ndjson_route.name}", table_name) #se carga a bigquery
     #primer parámetro es ubicación en GCS, segundo es la tabla en BIGQUERY
 
