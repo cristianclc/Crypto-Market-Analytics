@@ -17,7 +17,7 @@ def main():
 
 
     cur_date = datetime.now(tz=ZoneInfo("America/Bogota"))
-    date_name = datetime.strftime(datetime.now(), '%Y%m%d_%H%M%S') #fecha actual para el nombre
+    date_name = datetime.strftime(datetime.now(tz=ZoneInfo("America/Bogota")), '%Y%m%d_%H%M%S') #fecha actual para el nombre
 
     route_to_raw = Path.cwd() / "data" / "raw" #ruta para el raw
     route_to_raw.mkdir(parents=True, exist_ok=True) #crea la carpeta si no exite
