@@ -17,17 +17,17 @@ def bigquery_load_from_gcs(uri: str, table_id:str): #uri es el enlace del ndjson
     return load_job.result()
 
 def bigquery_delete_snapshot_date(table_id:str, snapshot_date_delete:str): #table_id, la tabla de donde se va a borrar la fecha, snapshot_date_delete, fecha (garantizar solo 100 en un día)
-    param = bigquery.ScalarQueryParameter("snapshot_date", "DATE", snapshot_date_delete)
+    param = bigquery.ScalarQueryParameter("snapshot_date", "DATE", snapshot_date_delete) #nombre, tipo de dato, valor asignado
 
     job_config = bigquery.QueryJobConfig(
-        query_parameters=[param]
+        query_parameters=[param] #se le pasan los parametros definidos
     )
 
     query = f"""DELETE FROM `{table_id}`
-    WHERE snapshot_date = @snapshot_date"""
+    WHERE snapshot_date = @snapshot_date""" #query @sirve para llamar una variable definida con ScalarQueryParameter, `` sirven para nombres de tabla
 
-    query_job = client.query(query, job_config=job_config)
-    query_job.result()
+    query_job = client.query(query, job_config=job_config) #le pasamos la query el jobconfig con los parametros para la query
+    query_job.result() #necesario para ver el numero de filas borradas
 
     print("Filas borradas:", query_job.num_dml_affected_rows)
 

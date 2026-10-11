@@ -1,10 +1,9 @@
 name: daily_snapshot
 run-name: snapshot diaria del top 100 monedas del mercado
 on: 
-    schedule:
-        - cron: '0 6 * * *'
-          timezone: "America/Bogota"
-    workflow_dispatch:
+  schedule:
+      - cron: '0 11,15 * * *'
+  workflow_dispatch:
 jobs: 
     extract_transform:
         runs-on: ubuntu-latest
