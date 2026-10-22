@@ -27,7 +27,7 @@ bitcoin_cap_vol_change as (
     SELECT *, 
     (total_volume - previous_total_volume) as daily_total_volume_change, --cambio en volumen diario
     (total_market_cap - previous_total_market_cap) as daily_total_market_cap_change, --cambio en market cap diario 
-    SAFE_DIVIDE(bitcoin_total_market_cap, total_market_cap) * 100 as bitcoin_cap_participation_pct --participacion de bitcoin en market cap total
+    SAFE_DIVIDE(bitcoin_total_market_cap, total_market_cap) * 100 as bitcoin_cap_participation_pct, --participacion de bitcoin en market cap total
     snapshot_date = MAX(snapshot_date) OVER() as is_latest_day --última fecha
     from prev_volume_cap
 )
