@@ -44,6 +44,7 @@ tendency AS (
 ranking AS (
     SELECT *,
     RANK() OVER(PARTITION BY snapshot_date ORDER BY price_7d_return_pct DESC) as return_7d_rank --ranking de los retornos semanales por moneda (%)
+    snapshot_date = MAX(snapshot_date) OVER() as is_latest_day --última fecha
     FROM tendency
 )
 
