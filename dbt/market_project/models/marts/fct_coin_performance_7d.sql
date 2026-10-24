@@ -23,7 +23,7 @@ coin_return_std_tendency AS (
     days_in_window_7d = 7 AS is_full_window,
     (current_price - price_7d) AS price_7d_return,
     STDDEV_SAMP(daily_price_change_pct) OVER(last_week) AS weekly_price_volatility, --desviación estándar de retorno diario (volatiliad de los últimos 7 días)
-    AVG(current_price) OVER(last_week) AS price_ma_7d, --promedio de la última semana, si precio actual es mayor, alcista
+    AVG(current_price) OVER(last_week) AS price_ma_7d, --promedio de la última semana
     AVG(coin_total_volume) OVER(last_week) AS weekly_avg_volume, --volumen total de esta semana
     AVG(coin_total_volume) OVER(PARTITION BY coin_id  ORDER BY snapshot_date ROWS BETWEEN 13 PRECEDING AND 7 PRECEDING) AS last_week_avg_volume --volumen total de la semana pasada
     FROM weekly_changes
@@ -37,7 +37,7 @@ coin_return_std_tendency AS (
 tendency AS (
     SELECT *,
     SAFE_DIVIDE(price_7d_return, price_7d) AS price_7d_return_pct, --porcentaje de retorno en los últimos 7 días
-    current_price >  price_ma_7d as bool_actualprice_higher_than_mean --columna booleana de si precio actual es superior a media semanal
+    current_price >  price_ma_7d as bool_actualprice_higher_than_mean --columna booleana de si precio actual es superior a media semanal (alcista)
     FROM coin_return_std_tendency
 ),
 
@@ -47,6 +47,8 @@ ranking AS (
     snapshot_date = MAX(snapshot_date) OVER() as is_latest_day --última fecha
     FROM tendency
 )
+
+-- añade al mart una columna booleana que indique si la fila es de la fecha más reciente de la tabla. Pista: una función de ventana sobre toda la tabla, sin PARTITION BY.
 
 
 

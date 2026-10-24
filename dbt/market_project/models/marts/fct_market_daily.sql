@@ -27,11 +27,11 @@ bitcoin_cap_vol_change as (
     SELECT *, 
     (total_volume - previous_total_volume) as daily_total_volume_change, --cambio en volumen diario
     (total_market_cap - previous_total_market_cap) as daily_total_market_cap_change, --cambio en market cap diario 
-    SAFE_DIVIDE(bitcoin_total_market_cap, total_market_cap) * 100 as bitcoin_cap_participation_pct, --participacion de bitcoin en market cap total
-    snapshot_date = MAX(snapshot_date) OVER() as is_latest_day --última fecha
+    SAFE_DIVIDE(bitcoin_total_market_cap, total_market_cap) as bitcoin_cap_participation_pct, --participacion de bitcoin en market cap total
+    snapshot_date = MAX(snapshot_date) OVER() as is_latest_day --comparación de si la fecha actual es igual a la maxima (como es tabla, se reecriben todas las filas)
     from prev_volume_cap
 )
 
-
+-- añade al mart una columna booleana que indique si la fila es de la fecha más reciente de la tabla. Pista: una función de ventana sobre toda la tabla, sin PARTITION BY.
 
 SELECT * from bitcoin_cap_vol_change
