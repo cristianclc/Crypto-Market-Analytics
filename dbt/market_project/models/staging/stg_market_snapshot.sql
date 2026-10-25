@@ -14,6 +14,7 @@ renamed_table as ( --no seleccionamos, images ni roi
     id as coin_id,
     symbol as coin_symbol,
     name as coin_name,
+    image as coin_img,
 
     current_price,
 

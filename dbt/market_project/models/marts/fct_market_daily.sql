@@ -12,15 +12,16 @@ vol_cap_total as (
     SUM(coin_total_volume) as total_volume, --valor total de todas las compras (en un dia)
     SUM(coin_market_cap) as total_market_cap, --valor total de todas las monedas (en un dia)
     SUM(CASE WHEN coin_id = "bitcoin" THEN coin_market_cap ELSE 0 END) as bitcoin_total_market_cap --valor total SOLO de bitcoin
-    from int_daily_coin_return
+    FROM int_daily_coin_return
     GROUP BY snapshot_date
 ),
 
 prev_volume_cap as (
     SELECT *, 
     LAG(total_volume) OVER(ORDER BY snapshot_date) as previous_total_volume, --anterior volumen diario
-    LAG(total_market_cap) OVER(ORDER BY snapshot_date) as previous_total_market_cap --anterior market cap diario 
-    from vol_cap_total
+    LAG(total_market_cap) OVER(ORDER BY snapshot_date) as previous_total_market_cap, --anterior market cap diario 
+    LAG(bitcoin_total_market_cap) OVER(ORDER BY snapshot_date) as btc_previous_total_market_cap --anterior market cap de bitcoin
+    FROM vol_cap_total
 ),
 
 bitcoin_cap_vol_change as (
@@ -29,9 +30,15 @@ bitcoin_cap_vol_change as (
     (total_market_cap - previous_total_market_cap) as daily_total_market_cap_change, --cambio en market cap diario 
     SAFE_DIVIDE(bitcoin_total_market_cap, total_market_cap) as bitcoin_cap_participation_pct, --participacion de bitcoin en market cap total
     snapshot_date = MAX(snapshot_date) OVER() as is_latest_day --comparación de si la fecha actual es igual a la maxima (como es tabla, se reecriben todas las filas)
-    from prev_volume_cap
+    FROM prev_volume_cap
+),
+
+bitcoin_cap_vol_change_pct as (
+    SELECT *,
+    LAG(bitcoin_cap_participation_pct) OVER(ORDER BY snapshot_date) as previous_bitcoin_cap_participation_pct, -- % participacion de bitcoin anterior
+    SAFE_DIVIDE(daily_total_volume_change, previous_total_volume) as daily_total_volume_change_pct, --cambio en volumen diario en pct
+    SAFE_DIVIDE(daily_total_market_cap_change, previous_total_market_cap) as daily_total_market_cap_change_pct --cambio en market cap diario en pct
+    FROM bitcoin_cap_vol_change
 )
 
--- añade al mart una columna booleana que indique si la fila es de la fecha más reciente de la tabla. Pista: una función de ventana sobre toda la tabla, sin PARTITION BY.
-
-SELECT * from bitcoin_cap_vol_change
+SELECT * from bitcoin_cap_vol_change_pct

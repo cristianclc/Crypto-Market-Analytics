@@ -5,6 +5,7 @@ with stg_market_snapshot as (
         coin_id,
         coin_name,
         coin_symbol,
+        coin_img,
         snapshot_date,
         last_updated,
         current_price,
