@@ -2,7 +2,7 @@ name: daily_snapshot
 run-name: snapshot diaria del top 100 monedas del mercado
 on: 
   schedule:
-      - cron: '17 11,15 * * *'
+      - cron: '17 * * * *'
   workflow_dispatch:
 jobs: 
     extract_transform:
