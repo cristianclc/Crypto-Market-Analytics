@@ -14,7 +14,7 @@ Pipeline de datos **end-to-end y automatizado** que extrae a diario el top 100 d
 
 **[Visualización Dashboard](https://datastudio.google.com/reporting/f67b7312-eb6e-4b05-95c1-8d68db19d101)**
 
-### Página 1: Visión general del mercad0
+### Página 1: Visión general del mercado
 ![Visión general del mercado](docs/img/img1.png)
 
 KPIs del mercado total (market cap, volumen, dominancia de Bitcoin) con variación frente al día anterior y su evolución temporal.
